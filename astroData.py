@@ -18,18 +18,19 @@ class astroData:
             self.moonphase = astroData['astronomy']['astro']['moon_phase']
             self.moon_ill = astroData['astronomy']['astro']['moon_illumination']
 
-            self.obs = ephem.Observer(lat=self.lat, lon=self.lon)
+            self.obs = ephem.Observer()
+            self.obs.lat = str(self.lat)
+            self.obs.lon = str(self.lon)
             self.format = '%a %I:%M %p'
 
-            print('init statement complete')
         except:
             pass
 
 
-    def getPlanetData(self):
+    def getPlanetRiseSet(self):
         obs = ephem.Observer()
-        obs.lat = self.lat
-        obs.lon = self.lon
+        obs.lat = str(self.lat)
+        obs.lon = str(self.lon)
         format = '%a %I:%M %p'
 
         planet_data = []
@@ -45,7 +46,33 @@ class astroData:
         }
 
         for object in planets:
-            print(planets[object].name)
+            planets[object].compute(obs)
+
+            if '-' in str(planets[object].alt):  # If below horizon, calculate next rise and next set, adds to list
+                rise_time = obs.next_rising(planets[object], start=ephem.now())
+                local_rise_time = ephem.localtime(rise_time)
+                formated_rise_time = local_rise_time.strftime(format)
+
+                set_time = obs.next_setting(planets[object], start=ephem.now())
+                local_set_time = ephem.localtime(set_time)
+                formated_set_time = local_set_time.strftime(format)
+
+                new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
+                planet_data.append(new_entry)
+
+            else:  # If above horizon, calculates previous rise and next set
+                rise_time = obs.previous_rising(planets[object], start=ephem.now())
+                local_rise_time = ephem.localtime(rise_time)
+                formated_rise_time = local_rise_time.strftime(format)
+
+                set_time = obs.next_setting(planets[object], start=ephem.now())
+                local_set_time = ephem.localtime(set_time)
+                formated_set_time = local_set_time.strftime(format)
+
+                new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
+                planet_data.append(new_entry)
+
+        return planet_data
 
     def format(self):
         return self.name + '\nLatitude: ' + str(self.lat) + ' Longitude: ' + str(self.lon) \
@@ -57,3 +84,4 @@ class astroData:
 
 
 d = astroData('Naperville')
+d.getPlanetRiseSet()
