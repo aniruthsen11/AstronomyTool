@@ -3,36 +3,38 @@ from tkinter import ttk
 import requests, ephem
 import matplotlib.pyplot as plt
 import matplotlib.collections as collections
+import astroData
 
 HEIGHT = 600
-WIDTH = 500
+WIDTH = 800
 
-def getAstroData(city):
-    url = 'http://api.weatherapi.com/v1/astronomy.json'
-    key = 'b8814e409a554c4888241017211505'
-    params = {'q': city, 'key': key}
-    astroData = requests.get(url, params=params).json()
-    try:
-        name = astroData['location']['name'] + ", " + astroData['location']['region'] + ", " + astroData['location']['country']
-        lat =  astroData['location']['lat']
-        lon = astroData['location']['lon']
-        sunrise = astroData['astronomy']['astro']['sunrise']
-        sunset = astroData['astronomy']['astro']['sunset']
-        moonrise = astroData['astronomy']['astro']['moonrise']
-        moonset = astroData['astronomy']['astro']['moonset']
-        moonphase = astroData['astronomy']['astro']['moon_phase']
-        moon_ill = astroData['astronomy']['astro']['moon_illumination']
-        clouds = getWeather(city)
-        updateTreeTable(getPlanetData(str(lat), str(lon)))
-        label['text'] = formatAstroData(name, lat, lon, sunrise, sunset, moonrise, moonset, moonphase, moon_ill, clouds)
 
-        print(astroData)
-    except:
-        label['text'] = 'No Data Found'
-        index = 0
-        for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
-            tree_table.insert(parent='', index=index, values=(item, 'N/A', 'N/A'))
-            index += 1
+# def getAstroData(city):
+#     url = 'http://api.weatherapi.com/v1/astronomy.json'
+#     key = 'b8814e409a554c4888241017211505'
+#     params = {'q': city, 'key': key}
+#     astroData = requests.get(url, params=params).json()
+#     try:
+#         name = astroData['location']['name'] + ", " + astroData['location']['region'] + ", " + astroData['location']['country']
+#         lat =  astroData['location']['lat']
+#         lon = astroData['location']['lon']
+#         sunrise = astroData['astronomy']['astro']['sunrise']
+#         sunset = astroData['astronomy']['astro']['sunset']
+#         moonrise = astroData['astronomy']['astro']['moonrise']
+#         moonset = astroData['astronomy']['astro']['moonset']
+#         moonphase = astroData['astronomy']['astro']['moon_phase']
+#         moon_ill = astroData['astronomy']['astro']['moon_illumination']
+#         clouds = getWeather(city)
+#         updateTreeTable(getPlanetData(str(lat), str(lon)))
+#         label['text'] = formatAstroData(name, lat, lon, sunrise, sunset, moonrise, moonset, moonphase, moon_ill, clouds)
+#
+#         print(astroData)
+#     except:
+#         label['text'] = 'No Data Found'
+#         index = 0
+#         for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
+#             tree_table.insert(parent='', index=index, values=(item, 'N/A', 'N/A'))
+#             index += 1
 
 def getWeather(city):
     url = 'http://api.weatherapi.com/v1/current.json'
@@ -43,12 +45,12 @@ def getWeather(city):
 
     return clouds
 
-def formatAstroData(name,lat,lon, sunrise, sunset, moonrise, moonset, moonphase, moon_ill, clouds):
-    return name + '\nLatitude: ' + str(lat) + ' Longitude: ' + str(lon) \
-           + '\n\nSunrise: ' + sunrise + '\nSunset: ' \
-           + sunset + '\n\nMoonrise: ' + moonrise + '\nMoonset: ' \
-           + moonset + "\nPhase: " + moonphase + '\nIllumination: ' \
-           +moon_ill +'%' + '\n\nCloud Coverage: ' + clouds
+# def formatAstroData(name,lat,lon, sunrise, sunset, moonrise, moonset, moonphase, moon_ill, clouds):
+#     return name + '\nLatitude: ' + str(lat) + ' Longitude: ' + str(lon) \
+#            + '\n\nSunrise: ' + sunrise + '\nSunset: ' \
+#            + sunset + '\n\nMoonrise: ' + moonrise + '\nMoonset: ' \
+#            + moonset + "\nPhase: " + moonphase + '\nIllumination: ' \
+#            +moon_ill +'%' + '\n\nCloud Coverage: ' + clouds
 
 def getPlanetData(lat, lon):
     obs = ephem.Observer()
@@ -117,10 +119,10 @@ bkg_label = tk.Label(root, image=bkg_image)
 bkg_label.place(relwidth=1, relheight=1)
 
 frame = tk.Frame(root, bg='#4286ff', bd=7)
-frame.place(relwidth=0.75, relheight=0.1, relx=0.5, rely=0.1, anchor='n')
+frame.place(relwidth=0.85, relheight=0.1, relx=0.5, rely=0.1, anchor='n')
 
 lower_frame = tk.Frame(root, bg='#4286ff', bd=7)
-lower_frame.place(relwidth=0.75, relheight=0.70, relx=0.5, rely=0.25, anchor='n')
+lower_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.25, anchor='n')
 
 cityEntry = tk.Entry(frame, bg='white')
 cityEntry.place(relwidth=0.70, relheight=1)
@@ -144,7 +146,7 @@ tree_table.heading('#0', text='', anchor='center')
 tree_table.heading('Planet', text='Planet', anchor='center')
 tree_table.heading('Rises At', text='Rises At', anchor='center')
 tree_table.heading('Sets At', text='Sets At', anchor='center')
-tree_table.place(relwidth=1, relheight=0.42, rely=0.57)
+tree_table.place(relwidth=0.90, relheight=0.42, rely=0.57)
 
 index = 0
 for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
