@@ -3,7 +3,7 @@ from tkinter import ttk
 import requests, ephem
 import matplotlib.pyplot as plt
 import matplotlib.collections as collections
-import astroData
+import astro_data
 
 HEIGHT = 600
 WIDTH = 800
@@ -52,60 +52,63 @@ def getWeather(city):
 #            + moonset + "\nPhase: " + moonphase + '\nIllumination: ' \
 #            +moon_ill +'%' + '\n\nCloud Coverage: ' + clouds
 
-def getPlanetData(lat, lon):
-    obs = ephem.Observer()
-    obs.lat = lat
-    obs.lon = lon
-    format = '%a %I:%M %p'
-
-    planet_data = []
-
-    planets = {
-        'mercury': ephem.Mercury(),
-        'venus': ephem.Venus(),
-        'mars': ephem.Mars(),
-        'jupiter': ephem.Jupiter(),
-        'saturn': ephem.Saturn(),
-        'uranus': ephem.Uranus(),
-        'neptune': ephem.Neptune()
-    }
-
-    for object in planets:
-        planets[object].compute(obs)
-        print(planets[object].name, planets[object].alt)
-
-        if '-' in str(planets[object].alt):  # If below horizon, calculate next rise and next set, adds to list
-            rise_time = obs.next_rising(planets[object], start=ephem.now())
-            local_rise_time = ephem.localtime(rise_time)
-            formated_rise_time = local_rise_time.strftime(format)
-
-            set_time = obs.next_setting(planets[object], start=ephem.now())
-            local_set_time = ephem.localtime(set_time)
-            formated_set_time = local_set_time.strftime(format)
-
-            new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
-            planet_data.append(new_entry)
-
-        else:   # If above horizon, calculates previous rise and next set
-            rise_time = obs.previous_rising(planets[object], start=ephem.now())
-            local_rise_time = ephem.localtime(rise_time)
-            formated_rise_time = local_rise_time.strftime(format)
-
-            set_time = obs.next_setting(planets[object], start=ephem.now())
-            local_set_time = ephem.localtime(set_time)
-            formated_set_time = local_set_time.strftime(format)
-
-            new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
-            planet_data.append(new_entry)
-
-    print(planet_data)
-    return planet_data
+# def getPlanetData(lat, lon):
+#     obs = ephem.Observer()
+#     obs.lat = lat
+#     obs.lon = lon
+#     format = '%a %I:%M %p'
+#
+#     planet_data = []
+#
+#     planets = {
+#         'mercury': ephem.Mercury(),
+#         'venus': ephem.Venus(),
+#         'mars': ephem.Mars(),
+#         'jupiter': ephem.Jupiter(),
+#         'saturn': ephem.Saturn(),
+#         'uranus': ephem.Uranus(),
+#         'neptune': ephem.Neptune()
+#     }
+#
+#     for object in planets:
+#         planets[object].compute(obs)
+#         print(planets[object].name, planets[object].alt)
+#
+#         if '-' in str(planets[object].alt):  # If below horizon, calculate next rise and next set, adds to list
+#             rise_time = obs.next_rising(planets[object], start=ephem.now())
+#             local_rise_time = ephem.localtime(rise_time)
+#             formated_rise_time = local_rise_time.strftime(format)
+#
+#             set_time = obs.next_setting(planets[object], start=ephem.now())
+#             local_set_time = ephem.localtime(set_time)
+#             formated_set_time = local_set_time.strftime(format)
+#
+#             new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
+#             planet_data.append(new_entry)
+#
+#         else:   # If above horizon, calculates previous rise and next set
+#             rise_time = obs.previous_rising(planets[object], start=ephem.now())
+#             local_rise_time = ephem.localtime(rise_time)
+#             formated_rise_time = local_rise_time.strftime(format)
+#
+#             set_time = obs.next_setting(planets[object], start=ephem.now())
+#             local_set_time = ephem.localtime(set_time)
+#             formated_set_time = local_set_time.strftime(format)
+#
+#             new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
+#             planet_data.append(new_entry)
+#
+#     print(planet_data)
+#     return planet_data
 
 def updateTreeTable(planetData):
     index = 0
     for item in planetData:
         tree_table.insert(parent='', index=index, values=(item[0], item[1], item[2]))
         index += 1
+
+def search_button_click(city):
+    astro = astro_data(city)
 
 
 
@@ -127,7 +130,7 @@ lower_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.25, anchor='n'
 cityEntry = tk.Entry(frame, bg='white')
 cityEntry.place(relwidth=0.70, relheight=1)
 
-button = tk.Button(frame, text="Search", command= lambda: getAstroData(cityEntry.get()))
+button = tk.Button(frame, text="Search", command= lambda: search_button_click(cityEntry.get()))
 button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
 
 # test_button = tk.Button(frame, text="Test", command= lambda: formatPlanetData(getPlanetData('41.79', '-88.15')))
