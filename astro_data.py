@@ -1,6 +1,6 @@
 import requests, ephem
 
-class astroData:
+class AstroData:
     def __init__(self, city):
         URL = 'http://api.weatherapi.com/v1/astronomy.json'
         KEY = 'b8814e409a554c4888241017211505'
@@ -26,8 +26,7 @@ class astroData:
         except:
             pass
 
-
-    def getPlanetRiseSet(self):
+    def get_planet_rise_set(self):
         obs = ephem.Observer()
         obs.lat = str(self.lat)
         obs.lon = str(self.lon)
@@ -59,7 +58,6 @@ class astroData:
 
                 new_entry = [str(planets[object].name), formated_rise_time, formated_set_time]
                 planet_data.append(new_entry)
-
             else:  # If above horizon, calculates previous rise and next set
                 rise_time = obs.previous_rising(planets[object], start=ephem.now())
                 local_rise_time = ephem.localtime(rise_time)
@@ -82,6 +80,5 @@ class astroData:
                + self.moon_ill + '%'
 
 
-
-d = astroData('Naperville')
-d.getPlanetRiseSet()
+d = AstroData('Naperville')
+print(d.get_planet_rise_set())
