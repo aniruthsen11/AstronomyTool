@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import requests, ephem
 import matplotlib.pyplot as plt
-import matplotlib.collections as collections
-import astro_data
-
+import numpy as np
+from astro_data import AstroData
+from weather_data import WeatherData
 HEIGHT = 600
 WIDTH = 800
 
@@ -101,62 +101,84 @@ def getWeather(city):
 #     print(planet_data)
 #     return planet_data
 
-def updateTreeTable(planetData):
-    index = 0
-    for item in planetData:
-        tree_table.insert(parent='', index=index, values=(item[0], item[1], item[2]))
-        index += 1
+# def updateTreeTable(planetData):
+#     index = 0
+#     for item in planetData:
+#         tree_table.insert(parent='', index=index, values=(item[0], item[1], item[2]))
+#         index += 1
 
 def search_button_click(city):
-    astro = astro_data(city)
+    astro = AstroData(city)
+
+def generate_cloud_graph(city, day):
+    weather = WeatherData(city)
+    astro = AstroData(city)
+
+    plt.rcParams['toolbar'] = 'None'
+
+    cloud_data = weather.get_hourly_cloud_data(day)
+    x_data = ['12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm']
+
+    plt.figure(figsize=(13,5.5), facecolor='white')
+    plt.plot(x_data, cloud_data, 'o-', color='black', linewidth=2)
+    plt.title('Cloud Coverage', fontsize=14, fontweight='bold')
+    plt.xlabel('Time', fontsize=11)
+    plt.ylabel('Cloud Coverage (%)', fontsize=11)
+    plt.grid(axis='y', linestyle='--', linewidth=1, color='black')
+
+    n = len(x_data)
+    gradient = np.linspace(0, 1, 800).reshape(-1, 1)
+    plt.imshow(gradient, extent=[-0.5, 23.5, -1, 105], aspect='auto', cmap='RdYlGn')
+
+    plt.tight_layout()
+    plt.show()
 
 
-
-root = tk.Tk()
-
-canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
-canvas.pack()
-
-bkg_image = tk.PhotoImage(file='stars.png')
-bkg_label = tk.Label(root, image=bkg_image)
-bkg_label.place(relwidth=1, relheight=1)
-
-frame = tk.Frame(root, bg='#4286ff', bd=7)
-frame.place(relwidth=0.85, relheight=0.1, relx=0.5, rely=0.1, anchor='n')
-
-lower_frame = tk.Frame(root, bg='#4286ff', bd=7)
-lower_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.25, anchor='n')
-
-cityEntry = tk.Entry(frame, bg='white')
-cityEntry.place(relwidth=0.70, relheight=1)
-
-button = tk.Button(frame, text="Search", command= lambda: search_button_click(cityEntry.get()))
-button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
-
-# test_button = tk.Button(frame, text="Test", command= lambda: formatPlanetData(getPlanetData('41.79', '-88.15')))
-# test_button.place(relx=0.850, rely=0, relwidth=0.15, relheight=1)
-
-label = tk.Label(lower_frame, text='Enter your city in the box above.')
-label.place(relwidth=1, relheight=0.55)
-
-tree_table = ttk.Treeview(lower_frame)
-tree_table['columns']=('Planet', 'Rises At', 'Sets At')
-tree_table.column('#0', width=0, stretch='no')
-tree_table.column('Planet', anchor='center', width=80)
-tree_table.column('Rises At', anchor='center', width=80)
-tree_table.column('Sets At', anchor='center', width=80)
-tree_table.heading('#0', text='', anchor='center')
-tree_table.heading('Planet', text='Planet', anchor='center')
-tree_table.heading('Rises At', text='Rises At', anchor='center')
-tree_table.heading('Sets At', text='Sets At', anchor='center')
-tree_table.place(relwidth=0.90, relheight=0.42, rely=0.57)
-
-index = 0
-for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
-    tree_table.insert(parent='', index=index, values=(item, 'N/A', 'N/A'))
-    index += 1
-
-root.mainloop()
+# root = tk.Tk()
+#
+# canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
+# canvas.pack()
+#
+# bkg_image = tk.PhotoImage(file='stars.png')
+# bkg_label = tk.Label(root, image=bkg_image)
+# bkg_label.place(relwidth=1, relheight=1)
+#
+# frame = tk.Frame(root, bg='#4286ff', bd=7)
+# frame.place(relwidth=0.85, relheight=0.1, relx=0.5, rely=0.1, anchor='n')
+#
+# lower_frame = tk.Frame(root, bg='#4286ff', bd=7)
+# lower_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.25, anchor='n')
+#
+# cityEntry = tk.Entry(frame, bg='white')
+# cityEntry.place(relwidth=0.70, relheight=1)
+#
+# button = tk.Button(frame, text="Search", command= lambda: search_button_click(cityEntry.get()))
+# button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
+#
+# # test_button = tk.Button(frame, text="Test", command= lambda: formatPlanetData(getPlanetData('41.79', '-88.15')))
+# # test_button.place(relx=0.850, rely=0, relwidth=0.15, relheight=1)
+#
+# label = tk.Label(lower_frame, text='Enter your city in the box above.')
+# label.place(relwidth=1, relheight=0.55)
+#
+# tree_table = ttk.Treeview(lower_frame)
+# tree_table['columns']=('Planet', 'Rises At', 'Sets At')
+# tree_table.column('#0', width=0, stretch='no')
+# tree_table.column('Planet', anchor='center', width=80)
+# tree_table.column('Rises At', anchor='center', width=80)
+# tree_table.column('Sets At', anchor='center', width=80)
+# tree_table.heading('#0', text='', anchor='center')
+# tree_table.heading('Planet', text='Planet', anchor='center')
+# tree_table.heading('Rises At', text='Rises At', anchor='center')
+# tree_table.heading('Sets At', text='Sets At', anchor='center')
+# tree_table.place(relwidth=0.90, relheight=0.42, rely=0.57)
+#
+# index = 0
+# for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
+#     tree_table.insert(parent='', index=index, values=(item, 'N/A', 'N/A'))
+#     index += 1
+#
+# root.mainloop()
 
 
 
@@ -191,4 +213,4 @@ root.mainloop()
 # plt.xlabel('Time from Now (Hours)')
 # plt.show()
 
-
+generate_cloud_graph('Naperville', 0)
