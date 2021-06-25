@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astro_data import AstroData
 from weather_data import WeatherData
+
 HEIGHT = 600
 WIDTH = 800
 
@@ -44,6 +45,7 @@ def getWeather(city):
     clouds = str(weatherData['current']['cloud']) + "%"
 
     return clouds
+
 
 # def formatAstroData(name,lat,lon, sunrise, sunset, moonrise, moonset, moonphase, moon_ill, clouds):
 #     return name + '\nLatitude: ' + str(lat) + ' Longitude: ' + str(lon) \
@@ -110,25 +112,62 @@ def getWeather(city):
 def search_button_click(city):
     astro = AstroData(city)
 
-def generate_cloud_graph(city, day):
+
+def hourly_cloud_vis_chart(city, day):
     weather = WeatherData(city)
-    astro = AstroData(city)
 
     plt.rcParams['toolbar'] = 'None'
 
     cloud_data = weather.get_hourly_cloud_data(day)
-    x_data = ['12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm']
+    vis_data = weather.get_hourly_visibility_data(day)
+    x_data = ['12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm',
+              '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm', '10pm', '11pm']
 
-    plt.figure(figsize=(13,5.5), facecolor='white')
-    plt.plot(x_data, cloud_data, 'o-', color='black', linewidth=2)
-    plt.title('Cloud Coverage', fontsize=14, fontweight='bold')
-    plt.xlabel('Time', fontsize=11)
-    plt.ylabel('Cloud Coverage (%)', fontsize=11)
-    plt.grid(axis='y', linestyle='--', linewidth=1, color='black')
+    fig, axs = plt.subplots(2)
 
-    n = len(x_data)
+    axs[0].plot(x_data, cloud_data, 'o-', color='black', linewidth=2)
+    axs[0].set_title('Cloud Coverage', fontsize=14, fontweight='bold')
+    axs[0].set_xlabel('Time', fontsize=11)
+    axs[0].set_ylabel('Cloud Coverage (%)', fontsize=11)
+
+    axs[1].plot(x_data, vis_data, 'o-', color='black', linewidth=2)
+    axs[1].set_title('Visibility', fontsize=14, fontweight='bold')
+    axs[1].set_xlabel('Time', fontsize=11)
+    axs[1].set_ylabel('Visibility (miles)', fontsize=11)
+
+    # plt.figure(figsize=(12,4), facecolor='white')
+    # plt.plot(x_data, cloud_data, 'o-', color='black', linewidth=2)
+    # plt.title('Cloud Coverage', fontsize=14, fontweight='bold')
+    # plt.xlabel('Time', fontsize=11)
+    # plt.ylabel('Cloud Coverage (%)', fontsize=11)
+    # plt.grid(axis='y', linestyle='--', linewidth=1, color='black')
+
     gradient = np.linspace(0, 1, 800).reshape(-1, 1)
-    plt.imshow(gradient, extent=[-0.5, 23.5, -1, 105], aspect='auto', cmap='RdYlGn')
+    axs[0].imshow(gradient, extent=[-0.9, 23.5, -1, 105], aspect='auto', cmap='RdYlGn')
+    axs[1].imshow(gradient, extent=[-0.9, 23.5, -1, 11], aspect='auto', cmap='RdYlGn_r')
+
+
+    fig.tight_layout()
+    fig.set_figwidth(13)
+    fig.set_figheight(8)
+    plt.show()
+
+
+def hourly_visibility_chart(city, day):
+    weather = WeatherData(city)
+
+    plt.rcParams['toolbar'] = 'None'
+
+    vis_data = weather.get_hourly_visibility_data(day)
+    x_data = ['12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm',
+              '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm', '10pm', '11pm']
+
+    plt.figure(figsize=(12, 4), facecolor='white')
+    plt.plot(x_data, vis_data, 'o-', color='black', linewidth=2)
+    plt.title('Visibility', fontsize=14, fontweight='bold')
+    plt.xlabel('Time', fontsize=11)
+    plt.ylabel('Visibility (miles)', fontsize=11)
+    plt.grid(axis='y', linestyle='--', linewidth=1, color='black')
 
     plt.tight_layout()
     plt.show()
@@ -181,7 +220,6 @@ def generate_cloud_graph(city, day):
 # root.mainloop()
 
 
-
 # observer = ephem.Observer()
 # observer.lat = '41.615913'  # lat and long must be string not float
 # observer.lon = '-88.204071'
@@ -213,4 +251,4 @@ def generate_cloud_graph(city, day):
 # plt.xlabel('Time from Now (Hours)')
 # plt.show()
 
-generate_cloud_graph('Naperville', 0)
+hourly_cloud_vis_chart('Beijing', 0)

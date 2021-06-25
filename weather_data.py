@@ -16,6 +16,13 @@ class WeatherData():
             hourly_cloud_data.append(data_point)
         return hourly_cloud_data
 
+    def get_hourly_visibility_data(self, day):
+        hourly_visibility_data = []
+        for hour in range(24):
+            data_point = self.weather['forecast']['forecastday'][day]['hour'][hour]['vis_miles']
+            hourly_visibility_data.append(data_point)
+        return hourly_visibility_data
+
     def get_date(self):
         pass
 
