@@ -160,8 +160,11 @@ bkg_label.place(relwidth=1, relheight=1)
 frame = tk.Frame(root, bg='#4286ff', bd=7)
 frame.place(relwidth=0.85, relheight=0.08, relx=0.5, rely=0.05, anchor='n')
 
-today_weather = tk.Frame(root, bg='#4286ff', bd=4)
-today_weather.place(relwidth=0.33, relheight=0.2, relx=0, rely=0.15, anchor='nw')
+weather_data_group = tk.Frame(root, bg='#4286ff', bd=4)
+weather_data_group.place(relwidth=0.85, relheight=0.3, relx=0.5, rely=0.15, anchor='n')
+
+today_weather = tk.Frame(weather_data_group, bg='#4286ff', bd=4)
+today_weather.place(relwidth=0.33, relheight=1, relx=0, rely=0.15, anchor='nw')
 today_weather_text = tk.Label(today_weather, text='Today')
 today_weather_text.place(relwidth=1, relheight=1)
 
@@ -175,8 +178,8 @@ day_after_weather.place(relwidth=0.33, relheight=0.2, relx=0.67, rely=0.15, anch
 day_after_weather_text = tk.Label(day_after_weather, text='Day After')
 day_after_weather_text.place(relwidth=1, relheight=1)
 
-lower_frame = tk.Frame(root, bg='#4286ff', bd=7)
-lower_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.25, anchor='n')
+city_info_frame = tk.Frame(root, bg='#4286ff', bd=4)
+city_info_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.35, anchor='n')
 
 cityEntry = tk.Entry(frame, bg='white')
 cityEntry.place(relwidth=0.70, relheight=1)
@@ -187,10 +190,10 @@ button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
 # test_button = tk.Button(frame, text="Test", command= lambda: formatPlanetData(getPlanetData('41.79', '-88.15')))
 # test_button.place(relx=0.850, rely=0, relwidth=0.15, relheight=1)
 
-label = tk.Label(lower_frame, text='Enter your city in the box above.')
+label = tk.Label(city_info_frame, text='Enter your city in the box above.')
 label.place(relwidth=1, relheight=0.55)
 
-tree_table = ttk.Treeview(lower_frame)
+tree_table = ttk.Treeview(city_info_frame)
 tree_table['columns']=('Planet', 'Rises At', 'Sets At')
 tree_table.column('#0', width=0, stretch='no')
 tree_table.column('Planet', anchor='center', width=80)
