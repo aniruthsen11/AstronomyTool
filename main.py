@@ -161,30 +161,36 @@ frame = tk.Frame(root, bg='#4286ff', bd=7)
 frame.place(relwidth=0.85, relheight=0.08, relx=0.5, rely=0.05, anchor='n')
 
 weather_data_group = tk.Frame(root, bg='#4286ff', bd=4)
-weather_data_group.place(relwidth=0.85, relheight=0.3, relx=0.5, rely=0.15, anchor='n')
+weather_data_group.place(relwidth=0.85, relheight=0.2, relx=0.5, rely=0.15, anchor='n')
 
-today_weather = tk.Frame(weather_data_group, bg='#4286ff', bd=4)
-today_weather.place(relwidth=0.33, relheight=1, relx=0, rely=0.15, anchor='nw')
+today_weather = tk.Frame(weather_data_group, bg='#4286ff')
+today_weather.place(relwidth=0.33, relheight=1, relx=0, rely=0, anchor='nw')
 today_weather_text = tk.Label(today_weather, text='Today')
-today_weather_text.place(relwidth=1, relheight=1)
+today_weather_text.place(relwidth=1, relheight=0.7)
+button_today = tk.Button(weather_data_group, text="Show More", command= lambda: hourly_cloud_vis_chart('Naperville', 0))
+button_today.place(relx=0, rely=0.7, relwidth=0.33, relheight=0.3)
 
-tomorrow_weather = tk.Frame(root, bg='#4286ff', bd=4)
-tomorrow_weather.place(relwidth=0.34, relheight=0.2, relx=0.33, rely=0.15, anchor='nw')
+tomorrow_weather = tk.Frame(weather_data_group, bg='#4286ff')
+tomorrow_weather.place(relwidth=0.34, relheight=0.7, relx=0.33, rely=0, anchor='nw')
 tom_weather_text = tk.Label(tomorrow_weather, text='Tomorrow')
 tom_weather_text.place(relwidth=1, relheight=1)
+button_tom = tk.Button(weather_data_group, text="Show More", command= lambda: hourly_cloud_vis_chart('Naperville', 1))
+button_tom.place(relx=0.33, rely=0.7, relwidth=0.34, relheight=0.3)
 
-day_after_weather = tk.Frame(root, bg='#4286ff', bd=4)
-day_after_weather.place(relwidth=0.33, relheight=0.2, relx=0.67, rely=0.15, anchor='nw')
+day_after_weather = tk.Frame(weather_data_group, bg='#4286ff')
+day_after_weather.place(relwidth=0.33, relheight=0.7, relx=0.67, rely=0, anchor='nw')
 day_after_weather_text = tk.Label(day_after_weather, text='Day After')
 day_after_weather_text.place(relwidth=1, relheight=1)
+button_dayafter = tk.Button(weather_data_group, text="Show More", command= lambda: hourly_cloud_vis_chart('Naperville', 2))
+button_dayafter.place(relx=0.67, rely=0.7, relwidth=0.33, relheight=0.3)
 
 city_info_frame = tk.Frame(root, bg='#4286ff', bd=4)
 city_info_frame.place(relwidth=0.85, relheight=0.70, relx=0.5, rely=0.35, anchor='n')
 
-cityEntry = tk.Entry(frame, bg='white')
-cityEntry.place(relwidth=0.70, relheight=1)
+search_entry = tk.Entry(frame, bg='white')
+search_entry.place(relwidth=0.70, relheight=1)
 
-button = tk.Button(frame, text="Search", command= lambda: search_button_click(cityEntry.get()))
+button = tk.Button(frame, text="Search", command= lambda: search_button_click(search_entry.get()))
 button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
 
 # test_button = tk.Button(frame, text="Test", command= lambda: formatPlanetData(getPlanetData('41.79', '-88.15')))
@@ -203,7 +209,7 @@ tree_table.heading('#0', text='', anchor='center')
 tree_table.heading('Planet', text='Planet', anchor='center')
 tree_table.heading('Rises At', text='Rises At', anchor='center')
 tree_table.heading('Sets At', text='Sets At', anchor='center')
-tree_table.place(relwidth=1, relheight=0.42, rely=0.57)
+tree_table.place(relwidth=0.5, relheight=0.42, rely=0, relx=0.5)
 
 index = 0
 for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
