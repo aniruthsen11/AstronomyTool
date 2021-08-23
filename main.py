@@ -5,9 +5,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astro_data import AstroData
 from weather_data import WeatherData
+from pandas import DataFrame
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-HEIGHT = 600
-WIDTH = 800
+HEIGHT = 850
+WIDTH = 700
 
 
 # def getAstroData(city):
@@ -46,13 +48,6 @@ def getWeather(city):
 
     return clouds
 
-
-# def formatAstroData(name,lat,lon, sunrise, sunset, moonrise, moonset, moonphase, moon_ill, clouds):
-#     return name + '\nLatitude: ' + str(lat) + ' Longitude: ' + str(lon) \
-#            + '\n\nSunrise: ' + sunrise + '\nSunset: ' \
-#            + sunset + '\n\nMoonrise: ' + moonrise + '\nMoonset: ' \
-#            + moonset + "\nPhase: " + moonphase + '\nIllumination: ' \
-#            +moon_ill +'%' + '\n\nCloud Coverage: ' + clouds
 
 # def getPlanetData(lat, lon):
 #     obs = ephem.Observer()
@@ -155,6 +150,20 @@ def hourly_cloud_vis_chart(city, day):
     fig.set_figheight(8)
     plt.show()
 
+def cloud_chart_GUI():
+    data1 = {'Country': ['US', 'CA', 'GER', 'UK', 'FR'],
+             'GDP_Per_Capita': [45000, 42000, 52000, 49000, 47000]
+             }
+    df1 = DataFrame(data1, columns=['Country', 'GDP_Per_Capita'])
+
+    figure1 = plt.Figure(figsize=(2, 2), dpi=100)
+    ax1 = figure1.add_subplot(111)
+    bar1 = FigureCanvasTkAgg(figure1, root)
+    bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+    df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
+    df1.plot(kind='bar', legend=True, ax=ax1)
+    ax1.set_title('Country Vs. GDP Per Capita')
+
 
 root = tk.Tk()
 
@@ -166,7 +175,9 @@ bkg_label = tk.Label(root, image=bkg_image)
 bkg_label.place(relwidth=1, relheight=1)
 
 frame = tk.Frame(root, bg='#4286ff', bd=7)
-frame.place(relwidth=0.85, relheight=0.08, relx=0.5, rely=0.05, anchor='n')
+frame.place(relwidth=0.85, relheight=0.05, relx=0.5, rely=0.05, anchor='n')
+search_entry = tk.Entry(frame, bg='white')
+search_entry.place(relwidth=0.70, relheight=1)
 
 weather_data_group = tk.Frame(root, bg='#4286ff', bd=4)
 weather_data_group.place(relwidth=0.85, relheight=0.3, relx=0.5, rely=0.15, anchor='n')
@@ -175,28 +186,26 @@ today_weather_frame = tk.Frame(weather_data_group, bg='#4286ff')
 today_weather_frame.place(relwidth=0.33, relheight=1, relx=0, rely=0, anchor='nw')
 today_weather_text = tk.Label(today_weather_frame, text='Today')
 today_weather_text.place(relwidth=1, relheight=0.7)
-button_today = tk.Button(weather_data_group, text="Show More", command= lambda: hourly_cloud_vis_chart('Naperville', 0))
-button_today.place(relx=0, rely=0.7, relwidth=0.33, relheight=0.3)
+cloudvis_button1 = tk.Button(weather_data_group, text="Cloud Coverage & Visibility", command= lambda: hourly_cloud_vis_chart(search_entry.get(), 0))
+cloudvis_button1.place(relx=0, rely=0.7, relwidth=0.33, relheight=0.3)
 
 tomorrow_weather_frame = tk.Frame(weather_data_group, bg='#4286ff')
 tomorrow_weather_frame.place(relwidth=0.34, relheight=0.7, relx=0.33, rely=0, anchor='nw')
 tom_weather_text = tk.Label(tomorrow_weather_frame, text='Tomorrow')
 tom_weather_text.place(relwidth=1, relheight=1)
-button_tom = tk.Button(weather_data_group, text="Show More", command= lambda: hourly_cloud_vis_chart('Naperville', 1))
-button_tom.place(relx=0.33, rely=0.7, relwidth=0.34, relheight=0.3)
+cloudvis_button2 = tk.Button(weather_data_group, text="Cloud Coverage & Visibility", command= lambda: hourly_cloud_vis_chart(search_entry.get(), 1))
+cloudvis_button2.place(relx=0.33, rely=0.7, relwidth=0.34, relheight=0.3)
 
 day_after_weather_frame = tk.Frame(weather_data_group, bg='#4286ff')
 day_after_weather_frame.place(relwidth=0.33, relheight=0.7, relx=0.67, rely=0, anchor='nw')
 day_after_weather_text = tk.Label(day_after_weather_frame, text='Day After')
 day_after_weather_text.place(relwidth=1, relheight=1)
-button_dayafter = tk.Button(weather_data_group, text="Show More", command= lambda: hourly_cloud_vis_chart('Naperville', 2))
-button_dayafter.place(relx=0.67, rely=0.7, relwidth=0.33, relheight=0.3)
+cloudvis_button3 = tk.Button(weather_data_group, text="Cloud Coverage & Visibility", command= lambda: hourly_cloud_vis_chart(search_entry.get(), 2))
+cloudvis_button3.place(relx=0.67, rely=0.7, relwidth=0.33, relheight=0.3)
 
 city_info_frame = tk.Frame(root, bg='#4286ff', bd=4)
 city_info_frame.place(relwidth=0.85, relheight=0.30, relx=0.5, rely=0.5, anchor='n')
 
-search_entry = tk.Entry(frame, bg='white')
-search_entry.place(relwidth=0.70, relheight=1)
 
 button = tk.Button(frame, text="Search", command= lambda: search_button_click())
 button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
@@ -226,6 +235,9 @@ index = 0
 for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
     tree_table.insert(parent='', index=index, values=(item, 'N/A', 'N/A'))
     index += 1
+
+# cloud_chart_GUI()
+
 
 root.mainloop()
 
