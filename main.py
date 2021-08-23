@@ -7,8 +7,10 @@ from astro_data import AstroData
 from weather_data import WeatherData
 from pandas import DataFrame
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.dates
+import datetime as dt
 
-HEIGHT = 850
+HEIGHT = 800
 WIDTH = 700
 
 
@@ -150,19 +152,33 @@ def hourly_cloud_vis_chart(city, day):
     fig.set_figheight(8)
     plt.show()
 
-def cloud_chart_GUI():
-    data1 = {'Country': ['US', 'CA', 'GER', 'UK', 'FR'],
-             'GDP_Per_Capita': [45000, 42000, 52000, 49000, 47000]
-             }
-    df1 = DataFrame(data1, columns=['Country', 'GDP_Per_Capita'])
+def cloud_chart_GUI(city, day):
+    weather = WeatherData(city)
 
-    figure1 = plt.Figure(figsize=(2, 2), dpi=100)
+    cloud_data = weather.get_hourly_cloud_data(day)
+    # x_data = ['12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm',
+    #           '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm', '10pm', '11pm']
+
+    hours = [dt.time(i).strftime('%I %p') for i in range(24)]
+    print(hours)
+
+    data1 = {'Time': hours,
+             'Cloud Coverage': cloud_data
+             }
+    df1 = DataFrame(data1, columns=['Time', 'Cloud Coverage'])
+
+    figure1 = plt.Figure()
+    figure1.tight_layout()
+    figure1.set_figheight(3.3)
+    figure1.set_figwidth(15)
+
+    plt.xticks(rotation=70)
     ax1 = figure1.add_subplot(111)
-    bar1 = FigureCanvasTkAgg(figure1, root)
-    bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-    df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
-    df1.plot(kind='bar', legend=True, ax=ax1)
-    ax1.set_title('Country Vs. GDP Per Capita')
+    ax1.scatter(df1['Time'], df1['Cloud Coverage'], color='b')
+    bar1 = FigureCanvasTkAgg(figure1, city_info_frame)
+    bar1.get_tk_widget().pack(side='bottom')
+    # df1 = df1[['Time', 'Cloud Coverage']].groupby('Time').sum()
+
 
 
 root = tk.Tk()
@@ -180,7 +196,7 @@ search_entry = tk.Entry(frame, bg='white')
 search_entry.place(relwidth=0.70, relheight=1)
 
 weather_data_group = tk.Frame(root, bg='#4286ff', bd=4)
-weather_data_group.place(relwidth=0.85, relheight=0.3, relx=0.5, rely=0.15, anchor='n')
+weather_data_group.place(relwidth=0.85, relheight=0.2, relx=0.5, rely=0.11, anchor='n')
 
 today_weather_frame = tk.Frame(weather_data_group, bg='#4286ff')
 today_weather_frame.place(relwidth=0.33, relheight=1, relx=0, rely=0, anchor='nw')
@@ -204,7 +220,7 @@ cloudvis_button3 = tk.Button(weather_data_group, text="Cloud Coverage & Visibili
 cloudvis_button3.place(relx=0.67, rely=0.7, relwidth=0.33, relheight=0.3)
 
 city_info_frame = tk.Frame(root, bg='#4286ff', bd=4)
-city_info_frame.place(relwidth=0.85, relheight=0.30, relx=0.5, rely=0.5, anchor='n')
+city_info_frame.place(relwidth=0.85, relheight=0.65, relx=0.5, rely=0.30, anchor='n')
 
 
 button = tk.Button(frame, text="Search", command= lambda: search_button_click())
@@ -214,7 +230,7 @@ button.place(relx=0.70, rely=0, relwidth=0.30, relheight=1)
 # test_button.place(relx=0.850, rely=0, relwidth=0.15, relheight=1)
 
 city_info_label = tk.Label(city_info_frame, text='Enter your city in the box above.')
-city_info_label.place(relwidth=0.5, relheight=1)
+city_info_label.place(relwidth=0.5, relheight=0.35)
 
 # tt_frame = tk.Frame(city_info_frame)
 # tt_frame.place(relx=0.5, relheight=0.5, relwidth=0.5)
@@ -229,14 +245,14 @@ tree_table.heading('#0', text='', anchor='center')
 tree_table.heading('Planet', text='Planet', anchor='center')
 tree_table.heading('Rises At', text='Rises At', anchor='center')
 tree_table.heading('Sets At', text='Sets At', anchor='center')
-tree_table.place(relwidth=0.5, relheight=1, rely=0, relx=0.5)
+tree_table.place(relwidth=0.5, relheight=0.35, rely=0, relx=0.5)
 
 index = 0
 for item in ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus','Neptune']:
     tree_table.insert(parent='', index=index, values=(item, 'N/A', 'N/A'))
     index += 1
 
-# cloud_chart_GUI()
+cloud_chart_GUI('Naperville', 0)
 
 
 root.mainloop()
